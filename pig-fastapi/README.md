@@ -3,6 +3,8 @@
 ```bash
 # uv venv
 brew install openapi-generator # macos and linux exclusive
+# if you dont have brew use the pip version
+# https://github.com/openAPITools/openapi-generator-pip
 openapi-generator generate -i pig_game_api.yaml -g python-fastapi -o ./app
 ```
 ## getting the generated code to run
