@@ -1,0 +1,230 @@
+openapi: 3.0.0
+info:
+  title: Pig Game API
+  description: API for playing the classic dice game Pig.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+tags:
+  - name: Game Management
+    description: Operations related to starting and managing games.
+  - name: Gameplay
+    description: Operations related to taking turns and playing the game.
+
+components:
+  schemas:
+    GameState:
+      type: object
+      description: Represents the current state of a Pig game.
+      properties:
+        game_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the game.
+          readOnly: true
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        current_player_index:
+          type: integer
+          description: Index of the player whose turn it is (0 or 1).
+          minimum: 0
+          maximum: 1
+          example: 0
+        scores:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+          description: Array of current overall scores for each player.
+          minItems: 2
+          maxItems: 2
+          example: [0, 0]
+        turn_total:
+          type: integer
+          description: Points accumulated in the current players turn.
+          minimum: 0
+          example: 12
+        last_roll:
+          type: integer
+          description: The result of the last die roll. Null if no roll yet this turn.
+          nullable: true
+          minimum: 1
+          maximum: 6
+          example: 4
+        is_game_over:
+          type: boolean
+          description: Indicates if the game has ended.
+          readOnly: true
+          example: false
+        winner_player_index:
+          type: integer
+          description: Index of the winning player if the game is over. Null otherwise.
+          nullable: true
+          minimum: 0
+          maximum: 1
+          readOnly: true
+          example: null
+      required:
+        - game_id
+        - current_player_index
+        - scores
+        - turn_total
+        - is_game_over
+
+    NewGameResponse:
+      type: object
+      description: Response containing the ID of a newly created game.
+      properties:
+        game_id:
+          type: string
+          format: uuid
+          description: Unique identifier for the new game.
+          example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+      required:
+        - game_id
+
+    ErrorResponse:
+      type: object
+      description: Standard error response format.
+      properties:
+        detail:
+          type: string
+          description: A detailed error message.
+          example: "Game not found"
+      required:
+        - detail
+
+paths:
+  /game:
+    post:
+      summary: Start a new Pig game.
+      operationId: create_new_game
+      tags:
+        - Game Management
+      responses:
+        "201":
+          description: Game created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewGameResponse"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /game/{game_id}:
+    get:
+      summary: Get the current state of a specific game.
+      operationId: get_game_state
+      tags:
+        - Game Management
+      parameters:
+        - name: game_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the game.
+      responses:
+        "200":
+          description: Current game state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameState"
+        "404":
+          description: Game not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /game/{game_id}/roll:
+    post:
+      summary: Roll the die for the current player.
+      operationId: roll_die
+      tags:
+        - Gameplay
+      parameters:
+        - name: game_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the game.
+      responses:
+        "200":
+          description: Game state after rolling the die.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameState"
+        "400":
+          description: Invalid game state (e.g., game already over).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Game not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /game/{game_id}/hold:
+    post:
+      summary: Current player holds, ending their turn and adding turn total to score.
+      operationId: hold_turn
+      tags:
+        - Gameplay
+      parameters:
+        - name: game_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the game.
+      responses:
+        "200":
+          description: Game state after holding.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameState"
+        "400":
+          description: Invalid game state (e.g., game already over, cannot hold after rolling a 1).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Game not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"

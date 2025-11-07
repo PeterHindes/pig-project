@@ -37,6 +37,7 @@ class MyDurableObject(DurableObject):
      * @returns {Promise<string>} The greeting to be sent back to the Worker
     """
     async def say_hello(self, name):
+        
         return f"Hello, {name}!"
 
 
