@@ -10,10 +10,12 @@ var readyToStart = false
 
 @export var TextLabel : RichTextLabel
 
+const address = "172.20.10.13"
+
 func _on_roll_btn_pressed() -> void:
 	$HTTPRequest2.request_completed.disconnect(_on_request_completed_hold)
 	$HTTPRequest2.request_completed.connect(_on_request_completed_roll)
-	$HTTPRequest2.request("http://localhost:7799/game/%s/roll"%[game_uuid],[],HTTPClient.METHOD_POST)
+	$HTTPRequest2.request("http://%s:7799/game/%s/roll"%[address,game_uuid],[],HTTPClient.METHOD_POST)
 func _on_request_completed_roll(result, response_code, headers, body):
 	print(response_code)
 	var json = JSON.parse_string(body.get_string_from_utf8())
@@ -24,13 +26,13 @@ func _on_request_completed_roll(result, response_code, headers, body):
 func _on_hold_btn_pressed() -> void:
 	$HTTPRequest2.request_completed.disconnect(_on_request_completed_roll)
 	$HTTPRequest2.request_completed.connect(_on_request_completed_hold)
-	$HTTPRequest2.request("http://localhost:7799/game/%s/hold"%[game_uuid],[],HTTPClient.METHOD_POST)
+	$HTTPRequest2.request("http://%s:7799/game/%s/hold"%[address,game_uuid],[],HTTPClient.METHOD_POST)
 func _on_request_completed_hold(result, response_code, headers, body):
 	pass
 
 func _on_timer_timeout() -> void:
 	$HTTPRequest.request_completed.connect(_on_request_completed_label)
-	$HTTPRequest.request("http://localhost:7799/game/%s"%[game_uuid],[],HTTPClient.METHOD_GET)
+	$HTTPRequest.request("http://%s:7799/game/%s"%[address,game_uuid],[],HTTPClient.METHOD_GET)
 func _on_request_completed_label(result, response_code, headers, body):
 	print(response_code)
 	if response_code == 200:
