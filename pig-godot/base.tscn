@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://ff26q32ycp8e"]
+
+[ext_resource type="Script" uid="uid://bwenvtcrkgo51" path="res://base.gd" id="1_8rhti"]
+[ext_resource type="Texture2D" uid="uid://n8682tpldrqi" path="res://pig.png" id="2_ohhpf"]
+[ext_resource type="PackedScene" uid="uid://bt87bwwwbskq8" path="res://game.tscn" id="3_21bcp"]
+
+[node name="base" type="Node2D" node_paths=PackedStringArray("game", "mainMenu")]
+script = ExtResource("1_8rhti")
+game = NodePath("game")
+mainMenu = NodePath("Control")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="pig" type="Sprite2D" parent="Control"]
+modulate = Color(0.96862745, 0.96862745, 1, 1)
+position = Vector2(315.50003, 239.49998)
+scale = Vector2(0.6279297, 0.553711)
+texture = ExtResource("2_ohhpf")
+
+[node name="JoinGame" type="Button" parent="Control"]
+layout_mode = 0
+offset_left = 167.0
+offset_top = 314.0
+offset_right = 486.0
+offset_bottom = 406.0
+text = "Join Game"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control"]
+layout_mode = 0
+offset_left = 189.0
+offset_top = 97.0
+offset_right = 656.0
+offset_bottom = 224.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 29
+text = "Pig The Dice Game"
+
+[node name="game" parent="." instance=ExtResource("3_21bcp")]
+visible = false
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[connection signal="pressed" from="Control/JoinGame" to="." method="_on_join_game_pressed"]
