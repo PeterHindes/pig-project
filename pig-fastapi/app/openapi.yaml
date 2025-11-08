@@ -154,6 +154,7 @@ components:
     GameState:
       description: Represents the current state of a Pig game.
       example:
+        ready_to_start: true
         scores:
         - 0
         - 0
@@ -204,6 +205,12 @@ components:
           nullable: true
           title: last_roll
           type: integer
+        ready_to_start:
+          description: Indicates if both players have joined and the game can be played.
+          example: true
+          readOnly: true
+          title: ready_to_start
+          type: boolean
         is_game_over:
           description: Indicates if the game has ended.
           example: false
@@ -223,13 +230,15 @@ components:
       - current_player_index
       - game_id
       - is_game_over
+      - ready_to_start
       - scores
       - turn_total
       title: GameState
       type: object
     NewGameResponse:
-      description: Response containing the ID of a newly created game.
+      description: Response containing the ID of a newly created game and player assignment.
       example:
+        player_id: 0
         game_id: a1b2c3d4-e5f6-7890-1234-567890abcdef
       properties:
         game_id:
@@ -238,8 +247,17 @@ components:
           format: uuid
           title: game_id
           type: string
+        player_id:
+          description: "Player ID assigned to this caller (0 for first player, 1 for\
+            \ second player). Matches current_player_index."
+          example: 0
+          maximum: 1
+          minimum: 0
+          title: player_id
+          type: integer
       required:
       - game_id
+      - player_id
       title: NewGameResponse
       type: object
     ErrorResponse:

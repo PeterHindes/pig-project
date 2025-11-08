@@ -22,6 +22,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
+from typing_extensions import Annotated
 from uuid import UUID
 try:
     from typing import Self
@@ -30,10 +31,11 @@ except ImportError:
 
 class NewGameResponse(BaseModel):
     """
-    Response containing the ID of a newly created game.
+    Response containing the ID of a newly created game and player assignment.
     """ # noqa: E501
     game_id: UUID = Field(description="Unique identifier for the new game.")
-    __properties: ClassVar[List[str]] = ["game_id"]
+    player_id: Annotated[int, Field(le=1, strict=True, ge=0)] = Field(description="Player ID assigned to this caller (0 for first player, 1 for second player). Matches current_player_index.")
+    __properties: ClassVar[List[str]] = ["game_id", "player_id"]
 
     model_config = {
         "populate_by_name": True,
@@ -84,7 +86,8 @@ class NewGameResponse(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "game_id": obj.get("game_id")
+            "game_id": obj.get("game_id"),
+            "player_id": obj.get("player_id")
         })
         return _obj
 

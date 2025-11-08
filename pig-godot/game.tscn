@@ -1,26 +1,16 @@
 [gd_scene load_steps=3 format=3 uid="uid://bt87bwwwbskq8"]
 
-[ext_resource type="Script" uid="uid://bgr05j8tjkxbw" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://bgr05j8tjkxbw" path="res://game.gd" id="1_ig7tw"]
 [ext_resource type="Texture2D" uid="uid://v2anwqlska3f" path="res://dice_sprite_cr.png" id="2_0xm2m"]
 
-[node name="Node2D" type="Node2D" node_paths=PackedStringArray("DiceOne", "DiceTwo", "TextLabel")]
+[node name="game" type="Node2D" node_paths=PackedStringArray("DiceOne", "TextLabel")]
 script = ExtResource("1_ig7tw")
 DiceOne = NodePath("Dice One")
-DiceTwo = NodePath("Dice Two")
 TextLabel = NodePath("Container/RichTextLabel")
 
 [node name="Dice One" type="Sprite2D" parent="."]
 texture_filter = 1
-position = Vector2(278.00003, 231)
-scale = Vector2(2.5, 2.5)
-texture = ExtResource("2_0xm2m")
-hframes = 3
-vframes = 2
-frame = 3
-
-[node name="Dice Two" type="Sprite2D" parent="."]
-texture_filter = 1
-position = Vector2(389, 261)
+position = Vector2(315, 235)
 scale = Vector2(2.5, 2.5)
 texture = ExtResource("2_0xm2m")
 hframes = 3
@@ -39,6 +29,7 @@ offset_left = 21.0
 offset_top = 20.0
 offset_right = 621.0
 offset_bottom = 180.0
+theme_override_colors/default_color = Color(0, 0, 0, 1)
 text = "Your Turn
 Your Score: 0000
 Opponent Score: 0000
@@ -52,7 +43,7 @@ offset_right = 625.0
 offset_bottom = 470.0
 text = "Roll"
 
-[node name="Pass Btn" type="Button" parent="Container"]
+[node name="Hold Btn" type="Button" parent="Container"]
 layout_mode = 0
 offset_left = 15.0
 offset_top = 420.0
@@ -60,5 +51,14 @@ offset_right = 255.0
 offset_bottom = 470.0
 text = "Pass"
 
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="HTTPRequest2" type="HTTPRequest" parent="."]
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.25
+one_shot = true
+
 [connection signal="pressed" from="Container/Roll Btn" to="." method="_on_roll_btn_pressed"]
-[connection signal="pressed" from="Container/Pass Btn" to="." method="_on_pass_btn_pressed"]
+[connection signal="pressed" from="Container/Hold Btn" to="." method="_on_hold_btn_pressed"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

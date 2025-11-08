@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="PIG DICE"
-run/main_scene="uid://bt87bwwwbskq8"
+run/main_scene="uid://ff26q32ycp8e"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
 config/windows_native_icon="res://dice_icon.ico"
@@ -20,6 +20,7 @@ config/windows_native_icon="res://dice_icon.ico"
 
 window/size/viewport_width=640
 window/size/viewport_height=480
+window/stretch/mode="viewport"
 
 [rendering]
 

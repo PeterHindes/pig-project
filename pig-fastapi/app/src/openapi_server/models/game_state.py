@@ -38,9 +38,10 @@ class GameState(BaseModel):
     scores: Annotated[List[Annotated[int, Field(strict=True, ge=0)]], Field(min_length=2, max_length=2)] = Field(description="Array of current overall scores for each player.")
     turn_total: Annotated[int, Field(strict=True, ge=0)] = Field(description="Points accumulated in the current players turn.")
     last_roll: Optional[Annotated[int, Field(le=6, strict=True, ge=1)]] = Field(default=None, description="The result of the last die roll. Null if no roll yet this turn.")
+    ready_to_start: StrictBool = Field(description="Indicates if both players have joined and the game can be played.")
     is_game_over: StrictBool = Field(description="Indicates if the game has ended.")
     winner_player_index: Optional[Annotated[int, Field(le=1, strict=True, ge=0)]] = Field(default=None, description="Index of the winning player if the game is over. Null otherwise.")
-    __properties: ClassVar[List[str]] = ["game_id", "current_player_index", "scores", "turn_total", "last_roll", "is_game_over", "winner_player_index"]
+    __properties: ClassVar[List[str]] = ["game_id", "current_player_index", "scores", "turn_total", "last_roll", "ready_to_start", "is_game_over", "winner_player_index"]
 
     model_config = {
         "populate_by_name": True,
@@ -75,11 +76,13 @@ class GameState(BaseModel):
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
+        * OpenAPI `readOnly` fields are excluded.
         """
         _dict = self.model_dump(
             by_alias=True,
             exclude={
                 "game_id",
+                "ready_to_start",
                 "is_game_over",
                 "winner_player_index",
             },
@@ -112,6 +115,7 @@ class GameState(BaseModel):
             "scores": obj.get("scores"),
             "turn_total": obj.get("turn_total"),
             "last_roll": obj.get("last_roll"),
+            "ready_to_start": obj.get("ready_to_start"),
             "is_game_over": obj.get("is_game_over"),
             "winner_player_index": obj.get("winner_player_index")
         })

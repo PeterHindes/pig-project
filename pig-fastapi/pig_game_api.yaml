@@ -51,6 +51,11 @@ components:
           minimum: 1
           maximum: 6
           example: 4
+        ready_to_start:
+          type: boolean
+          description: Indicates if both players have joined and the game can be played.
+          readOnly: true
+          example: true
         is_game_over:
           type: boolean
           description: Indicates if the game has ended.
@@ -69,19 +74,27 @@ components:
         - current_player_index
         - scores
         - turn_total
+        - ready_to_start
         - is_game_over
 
     NewGameResponse:
       type: object
-      description: Response containing the ID of a newly created game.
+      description: Response containing the ID of a newly created game and player assignment.
       properties:
         game_id:
           type: string
           format: uuid
           description: Unique identifier for the new game.
           example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        player_id:
+          type: integer
+          description: Player ID assigned to this caller (0 for first player, 1 for second player). Matches current_player_index.
+          minimum: 0
+          maximum: 1
+          example: 0
       required:
         - game_id
+        - player_id
 
     ErrorResponse:
       type: object
